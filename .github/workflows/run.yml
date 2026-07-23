@@ -31,7 +31,7 @@ jobs:
 
       # 4. 파이썬 스크립트 순차 실행
       - name: 크롤링/데이터 수집 파이썬 실행
-        run: python getNotice.py recent # 👈 실행할 첫 번째 파이썬 파일명
+        run: python getNotice.py all # 👈 실행할 첫 번째 파이썬 파일명
 
       # 5. HTML 빌드 파이썬(genHtml) 실행 및 환경 변수 전달
       - name: HTML 빌드 파이썬(genHtml) 실행
