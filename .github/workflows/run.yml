@@ -3,7 +3,7 @@ name: 파이썬 수동 및 자동 실행
 on:
   # 1️⃣ 매일 한국 시간(KST) 새벽 4시 자동 실행
   schedule:
-    - cron: '38 10 * * *' # UTC 19:00 = KST 04:00 (+9시간)
+    - cron: '0 19 * * *' # UTC 19:00 = KST 04:00 (+9시간)
 
   # 2️⃣ 웹페이지에서 원할 때 언제든 누르는 수동 버튼 생성
   workflow_dispatch:
@@ -11,6 +11,10 @@ on:
 jobs:
   run-python-scripts:
     runs-on: ubuntu-latest
+
+    # 🔑 추가: Git 커밋/푸시(write) 권한 부여 (403 에러 방지)
+    permissions:
+      contents: write
 
     steps:
       # 1. 내 레포지토리 코드 가져오기
@@ -35,7 +39,6 @@ jobs:
 
       # 5. HTML 빌드 파이썬(genHtml) 실행 및 환경 변수 전달
       - name: HTML 빌드 파이썬(genHtml) 실행
-          # 🔑 GitHub Secrets에 저장해둔 EU_ACTION_TOKEN을 genHTML.py로 전달!
         run: python genHTML.py # 👈 실행할 두 번째 파이썬 파일명
 
       # 6. 파이썬이 새로 만들거나 변경한 파일(index.html, json 등)을 Git에 자동 커밋&푸시
