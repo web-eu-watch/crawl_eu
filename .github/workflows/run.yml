@@ -28,7 +28,7 @@ jobs:
 
       # 파이썬 실행
       - name: 첫 번째 파이썬 실행
-        run: python getNotice.py # 👈 가지고 계신 파이썬 파일명으로 수정하세요
+        run: python getNotice.py recent # 👈 가지고 계신 파이썬 파일명으로 수정하세요
 
       - name: 빌드 파이썬(genHtml) 실행
         run: python genHTML.py # 👈 두 번째 파이썬 파일명으로 수정하세요
