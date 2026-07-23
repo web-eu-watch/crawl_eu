@@ -26,4 +26,4 @@ jobs:
         run: python getNotice.py recent # 👈 실행할 파이썬 파일명
 
       - name: 빌드 파이썬(genHtml) 실행
-        run: python genHtml.py
+        run: python genHTML.py
