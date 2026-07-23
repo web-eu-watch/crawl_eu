@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BJ 공지사항 뷰어</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 24px 16px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.6rem;
+            color: var(--text);
+        }
+
+        /* 검색바 */
+        .search-box {
+            position: sticky;
+            top: 12px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+        
+        .search-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* 카드 스타일 */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+        }
+        .badge-top {
+            background-color: #ef4444;
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+        .idx-tag {
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+        .date-tag {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-right: 10px;
+        }
+        .copy-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* 메인 본문 및 이미지 레이아웃 유지 */
+        .card-content-wrapper {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .card-body {
+            flex: 1;
+            min-width: 0; /* Text overflow 처리 보장 */
+            word-break: break-word;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        /* 📸 이미지 영역 스타일 */
+        .img-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+            transition: width 0.2s ease;
+        }
+
+        /* 1) 기본 썸네일 상태 (가로 120px) */
+        .img-container.thumb {
+            width: 120px;
+        }
+        .img-container.thumb img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        /* 2) 1차 클릭: 조금 확대 상태 (가로 220px) */
+        .img-container.expanded {
+            width: 220px;
+        }
+        .img-container.expanded img {
+            width: 220px;
+            max-height: 320px;
+            object-fit: contain;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        /* 원본 보기 버튼 (확대 시 이미지 아래 노출) */
+        .btn-view-original {
+            display: none;
+            width: 100%;
+            padding: 6px 8px;
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-view-original:hover {
+            background: #e2e8f0;
+            color: var(--primary);
+        }
+        .img-container.expanded .btn-view-original {
+            display: block;
+        }
+
+        /* 이력 아코디언 */
+        .history-section {
+            margin-top: 14px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+            width: 100%;
+        }
+        .history-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 0;
+        }
+        .history-btn:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        .history-list {
+            display: none;
+            margin-top: 10px;
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        .history-list.open { display: block; }
+        .history-item {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dotted #cbd5e1;
+            color: #475569;
+        }
+        .history-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            font-weight: bold;
+        }
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .no-result { text-align: center; padding: 40px; color: var(--text-muted); }
+
+        @media (max-width: 600px) {
+            .card-content-wrapper { flex-direction: column; }
+            .img-container.thumb, .img-container.expanded { width: 100%; }
+            .img-container.thumb img { width: 100%; height: 160px; }
+            .img-container.expanded img { width: 100%; max-height: 400px; }
+            .search-options { flex-direction: column; align-items: flex-start; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📢 이유 공지사항 </h1>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="본문 내용, 작성일시 또는 글번호 검색...">
+            <div class="search-options">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="includeHistoryCheck">
+                    <span>과거 수정 내용도 검색에 포함</span>
+                </label>
+                <div>
+                    <span>검색 결과: <strong id="totalCount">0</strong>개</span>
+                    <span>(<span id="currentPage">1</span> / <span id="totalPages">1</span> 페이지)</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="noticeContainer"></div>
+        <div id="pagination" class="pagination"></div>
+    </div>
+
+    <!-- 파이썬 데이터 주입 타겟 -->
+    <script id="master-data-raw" type="application/json">
+/* __DATA_INJECTION__ */
+    </script>
+
+    <script>
+    let masterDict = {};
+    try {
+        const rawJson = document.getElementById('master-data-raw').textContent.trim();
+        masterDict = JSON.parse(rawJson);
+    } catch (e) {
+        console.error("데이터 파싱 실패:", e);
+    }
+
+    const allData = Object.values(masterDict).sort((a, b) => {
+        const aTop = Boolean(a.isTop && a.isTop !== "N" && a.isTop !== "false");
+        const bTop = Boolean(b.isTop && b.isTop !== "N" && b.isTop !== "false");
+
+        if (aTop && !bTop) return -1;
+        if (!aTop && bTop) return 1;
+
+        return Number(b.idx) - Number(a.idx);
+    });
+
+    let filteredData = [...allData];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    const searchInput = document.getElementById('searchInput');
+    const includeHistoryCheck = document.getElementById('includeHistoryCheck');
+    const noticeContainer = document.getElementById('noticeContainer');
+    const pagination = document.getElementById('pagination');
+    const totalCountEl = document.getElementById('totalCount');
+    const currentPageEl = document.getElementById('currentPage');
+    const totalPagesEl = document.getElementById('totalPages');
+
+    function cleanContents(text) {
+        if (!text) return "";
+        return text
+            .replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<[^>]+>/g, '')
+            .trim();
+    }
+
+    function filterData() {
+        const query = searchInput.value.toLowerCase().trim();
+        const includeHistory = includeHistoryCheck.checked;
+
+        filteredData = allData.filter(item => {
+            const cleanedMain = cleanContents(item.contents).toLowerCase();
+            const contentsMatch = cleanedMain.includes(query);
+            const dateMatch = (item.date || "").toLowerCase().includes(query);
+            const idxMatch = String(item.idx).includes(query);
+
+            let historyMatch = false;
+            if (includeHistory && item.history && item.history.length > 0) {
+                historyMatch = item.history.some(h => 
+                    cleanContents(h.previousContents || "").toLowerCase().includes(query)
+                );
+            }
+
+            return contentsMatch || dateMatch || idxMatch || historyMatch;
+        });
+
+        currentPage = 1;
+        render();
+    }
+
+    function renderList() {
+        noticeContainer.innerHTML = '';
+        
+        if (filteredData.length === 0) {
+            noticeContainer.innerHTML = '<div class="no-result">검색 결과가 없습니다.</div>';
+            return;
+        }
+
+        const startIdx = (currentPage - 1) * itemsPerPage;
+        const pageItems = filteredData.slice(startIdx, startIdx + itemsPerPage);
+
+        pageItems.forEach((item) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            const isTopNotice = Boolean(item.isTop && item.isTop !== "N" && item.isTop !== "false");
+            const topBadge = isTopNotice ? '<span class="badge-top">📌 상단 고정</span>' : '';
+            const mainText = cleanContents(item.contents);
+            const formattedContents = escapeHtml(mainText).replace(/\n/g, '<br>');
+
+            // 이미지 영역 세팅
+            let imgHtml = '';
+            if (item.imgMainSrc) {
+                const cleanUrl = item.imgMainSrc.split("?")[0];
+                const imgName = `${item.idx}_${cleanUrl.split('/').pop()}`;
+                const localImgPath = `./images/${imgName}`;
+
+                imgHtml = `
+                    <div class="img-container thumb">
+                        <img src="${localImgPath}" alt="공지 이미지" onclick="toggleImgSize(this)" title="클릭하여 확대/축소" onerror="this.parentElement.style.display='none'">
+                        <a href="${localImgPath}" target="_blank" class="btn-view-original">🔍 원본 사진 보기</a>
+                    </div>
+                `;
+            }
+
+            // 히스토리 파트
+            let historyHtml = '';
+            if (item.history && item.history.length > 0) {
+                const historyItems = item.history.map((h, i) => {
+                    const hText = escapeHtml(cleanContents(h.previousContents)).replace(/\n/g, '<br>');
+                    return `
+                        <div class="history-item">
+                            <strong>[수정 전 기록 ${i + 1}]</strong><br>
+                            ${hText || '<i>(내용 없음)</i>'}
+                        </div>
+                    `;
+                }).join('');
+
+                historyHtml = `
+                    <div class="history-section">
+                        <button class="history-btn" onclick="toggleHistory(this)">
+                            📜 이전 수정 기록 보기 (${item.history.length}회)
+                        </button>
+                        <div class="history-list">
+                            ${historyItems}
+                        </div>
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div>${topBadge}<span class="idx-tag">#${item.idx}</span></div>
+                    <div style="display: flex; align-items: center;">
+                        <span class="date-tag">${item.date || ''}</span>
+                        <button class="copy-btn" onclick="copyText('${item.idx}', this)">📋 복사</button>
+                    </div>
+                </div>
+                <div class="card-content-wrapper">
+                    <div class="card-body">${formattedContents}</div>
+                    ${imgHtml}
+                </div>
+                ${historyHtml}
+            `;
+            noticeContainer.appendChild(card);
+        });
+    }
+
+    function toggleHistory(btn) {
+        const list = btn.nextElementSibling;
+        list.classList.toggle('open');
+    }
+
+    function toggleImgSize(imgElement) {
+        const container = imgElement.parentElement;
+        container.classList.toggle('thumb');
+        container.classList.toggle('expanded');
+    }
+
+    function copyText(idx, btnElement) {
+        const targetItem = masterDict[idx];
+        if (!targetItem) return;
+
+        const textToCopy = cleanContents(targetItem.contents);
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = btnElement.innerText;
+            btnElement.innerText = '✓ 복사됨!';
+            setTimeout(() => { btnElement.innerText = originalText; }, 1500);
+        });
+    }
+
+    function renderPagination() {
+        pagination.innerHTML = '';
+        const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
+
+        totalCountEl.textContent = filteredData.length;
+        currentPageEl.textContent = currentPage;
+        totalPagesEl.textContent = totalPages;
+
+        if (totalPages <= 1) return;
+
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'page-btn';
+        prevBtn.textContent = '◀ 이전';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => { currentPage--; render(); window.scrollTo(0, 0); };
+        pagination.appendChild(prevBtn);
+
+        let startPage = Math.max(1, currentPage - 4);
+        let endPage = Math.min(totalPages, startPage + 9);
+        if (endPage - startPage < 9) {
+            startPage = Math.max(1, endPage - 9);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const btn = document.createElement('button');
+            btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+            btn.textContent = i;
+            btn.onclick = () => { currentPage = i; render(); window.scrollTo(0, 0); };
+            pagination.appendChild(btn);
+        }
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'page-btn';
+        nextBtn.textContent = '다음 ▶';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => { currentPage++; render(); window.scrollTo(0, 0); };
+        pagination.appendChild(nextBtn);
+    }
+
+    function escapeHtml(str) {
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function render() {
+        renderList();
+        renderPagination();
+    }
+
+    searchInput.addEventListener('input', filterData);
+    includeHistoryCheck.addEventListener('change', filterData);
+    render();
+    </script>
+</body>
+</html>
