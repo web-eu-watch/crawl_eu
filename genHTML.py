@@ -15,10 +15,7 @@ def clean_contents(text: str) -> str:
     text = text.replace('\r\n', '\n').replace('\r', '\n')
     text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
     text = re.sub(r'<[^>]+>', '', text)
-    
-    # 연속된 줄바꿈을 하나로 정돈 (필요에 따라 '\n'으로 유지)
     text = text.replace('\n\n', '\n')
-        
     return text.strip()
 
 def build_html():
@@ -34,15 +31,34 @@ def build_html():
     with open(MASTER_JSON_PATH, "r", encoding="utf-8") as f:
         master_data = json.load(f)
 
-    # 2. 데이터 정제 (현재 본문 + 과거 수정 이력 본문 모두 정제)
+    # 2. 데이터 정제 및 로컬 이미지 경로 보존/생성
     cleaned_master_data = {}
     for idx_str, item in master_data.items():
-        # 원본 데이터 훼손 방지를 위해 복사본 가공
         item_copy = item.copy()
         
         # 메인 본문 정제
         item_copy["contents"] = clean_contents(item_copy.get("contents", ""))
         
+        # 📸 로컬 이미지 경로 처리 (기존 localImgPath 보존)
+        existing_local = item_copy.get("localImgPath")
+        img_src = item_copy.get("imgMainSrc")
+
+        if existing_local:
+            # 1) JSON에 이미 localImgPath가 있으면 웹 주소 유무와 상관없이 그대로 유지!
+            item_copy["localImgPath"] = existing_local
+        elif img_src:
+            # 2) localImgPath가 없지만 imgMainSrc 웹 주소가 있다면 새로 계산해서 지정
+            clean_url = img_src.split("?")[0]
+            img_name = f"{item_copy.get('idx', idx_str)}_{clean_url.split('/')[-1]}"
+            item_copy["localImgPath"] = f"./images/{img_name}"
+        else:
+            # 3) 둘 다 없는 경우에만 None
+            item_copy["localImgPath"] = None
+
+        # 원본 웹 URL 필드는 주입 데이터 축소를 위해 삭제 (선택 사항)
+        if "imgMainSrc" in item_copy:
+            del item_copy["imgMainSrc"]
+
         # 수정 이력(history) 본문 정제
         if "history" in item_copy and isinstance(item_copy["history"], list):
             new_history = []

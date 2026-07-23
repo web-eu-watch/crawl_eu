@@ -392,17 +392,13 @@
             const mainText = cleanContents(item.contents);
             const formattedContents = escapeHtml(mainText).replace(/\n/g, '<br>');
 
-            // 이미지 영역 세팅
+            // 📸 단순화된 이미지 영역 세팅 (localImgPath만 직접 참조)
             let imgHtml = '';
-            if (item.imgMainSrc) {
-                const cleanUrl = item.imgMainSrc.split("?")[0];
-                const imgName = `${item.idx}_${cleanUrl.split('/').pop()}`;
-                const localImgPath = `./images/${imgName}`;
-
+            if (item.localImgPath) {
                 imgHtml = `
                     <div class="img-container thumb">
-                        <img src="${localImgPath}" alt="공지 이미지" onclick="toggleImgSize(this)" title="클릭하여 확대/축소" onerror="this.parentElement.style.display='none'">
-                        <a href="${localImgPath}" target="_blank" class="btn-view-original">🔍 원본 사진 보기</a>
+                        <img src="${item.localImgPath}" alt="공지 이미지" onclick="toggleImgSize(this)" title="클릭하여 확대/축소" onerror="this.parentElement.style.display='none'">
+                        <a href="${item.localImgPath}" target="_blank" class="btn-view-original">🔍 원본 사진 보기</a>
                     </div>
                 `;
             }

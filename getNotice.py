@@ -34,28 +34,36 @@ def save_master_data(master_data):
         json.dump(master_data, f, ensure_ascii=False, indent=4)
 
 # ==========================================
-# 이미지 다운로드
+# 이미지 다운로드 & 로컬 상대 경로 반환
 # ==========================================
 def download_image_if_needed(idx, img_src, save_dir):
     if not img_src:
-        return
+        return ""
     
-    img_dir = os.path.join(save_dir, "images")
-    os.makedirs(img_dir, exist_ok=True)
+    # 1. 원격 CDN 이미지인 경우 (http/https로 시작)
+    if img_src.startswith("http://") or img_src.startswith("https://"):
+        img_dir = os.path.join(save_dir, "images")
+        os.makedirs(img_dir, exist_ok=True)
 
-    clean_img_url = img_src.split("?")[0]
-    img_name = f"{idx}_{os.path.basename(clean_img_url)}"
-    local_img_path = os.path.join(img_dir, img_name)
+        clean_img_url = img_src.split("?")[0]
+        img_name = f"{idx}_{os.path.basename(clean_img_url)}"
+        local_img_path = os.path.join(img_dir, img_name)
 
-    if not os.path.exists(local_img_path):
-        try:
-            res = requests.get(img_src, headers=HEADERS, timeout=10)
-            if res.status_code == 200:
-                with open(local_img_path, "wb") as f:
-                    f.write(res.content)
-                print(f"  └ [이미지 다운로드 성공] {img_name}")
-        except Exception as e:
-            print(f"  └ [이미지 에러] 글번호 {idx}: {e}")
+        if not os.path.exists(local_img_path):
+            try:
+                res = requests.get(img_src, headers=HEADERS, timeout=10)
+                if res.status_code == 200:
+                    with open(local_img_path, "wb") as f:
+                        f.write(res.content)
+                    print(f"  └ [이미지 다운로드 성공] {img_name}")
+            except Exception as e:
+                print(f"  └ [이미지 에러] 글번호 {idx}: {e}")
+
+        # HTML에서 사용할 상대 경로 반환
+        return f"images/{img_name}"
+
+    # 2. 이미 로컬 경로 형태로 들어온 경우 (사용자가 수동 수정했거나 이미 변환된 경우)
+    return img_src
 
 # ==========================================
 # 변경 감지 및 데이터 병합 (UPSERT)
@@ -75,17 +83,19 @@ def sync_with_master(fetched_items, save_dir):
 
         # 1. 신규 게시글
         if idx_str not in master_data:
+            local_path = download_image_if_needed(item.get("idx"), img_src, save_dir)
+
             master_data[idx_str] = {
                 "idx": item.get("idx"),
                 "date": item.get("insertDateTime", ""),
                 "isTop": is_top,
                 "contents": contents,
-                "imgMainSrc": img_src,
+                "imgMainSrc": img_src,         # 원본 CDN 주소 (참고/백업용)
+                "localImgPath": local_path,    # HTML 주입용 로컬 상대 경로 (예: "images/5575008_xxx.png")
                 "firstSeenAt": now_str,
                 "lastUpdatedAt": now_str,
-                "history": [] # 변경 이력 보관용
+                "history": []
             }
-            download_image_if_needed(item.get("idx"), img_src, save_dir)
             new_count += 1
             print(f"✨ [신규 게시글 감지] #{idx_str}")
 
@@ -97,11 +107,11 @@ def sync_with_master(fetched_items, save_dir):
             has_top_changed = old_item.get("isTop") != is_top
 
             if has_content_changed or has_img_changed or has_top_changed:
-                # 이전 버전 기록 남기기
                 history_entry = {
                     "updatedAt": now_str,
                     "previousContents": old_item.get("contents"),
-                    "previousImgMainSrc": old_item.get("imgMainSrc")
+                    "previousImgMainSrc": old_item.get("imgMainSrc"),
+                    "previousLocalImgPath": old_item.get("localImgPath", "")
                 }
                 
                 if "history" not in old_item:
@@ -114,9 +124,9 @@ def sync_with_master(fetched_items, save_dir):
                 old_item["isTop"] = is_top
                 old_item["lastUpdatedAt"] = now_str
 
-                # 새로 추가되거나 변경된 이미지 다운로드
+                # 이미지 URL 변경 시 새 로컬 경로 생성 및 다운로드
                 if has_img_changed:
-                    download_image_if_needed(item.get("idx"), img_src, save_dir)
+                    old_item["localImgPath"] = download_image_if_needed(item.get("idx"), img_src, save_dir)
 
                 updated_count += 1
                 print(f"✏️ [게시글 수정 감지] #{idx_str} (수정 시각: {now_str})")
