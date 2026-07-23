@@ -26,7 +26,7 @@
             margin: 0 auto;
         }
 
-        /* 📌 Header 및 타이틀 영역 수정 (버튼 나란히 배치) */
+        /* 📌 Header 및 타이틀 영역 (버튼 인라인 배치) */
         header {
             margin-bottom: 20px;
             display: flex;
@@ -165,7 +165,6 @@
             border-color: var(--primary);
         }
 
-        /* 메인 본문 및 이미지 레이아웃 유지 */
         .card-content-wrapper {
             display: flex;
             gap: 16px;
@@ -188,8 +187,6 @@
             flex-shrink: 0;
             transition: width 0.2s ease;
         }
-
-        /* 1) 기본 썸네일 상태 (가로 120px) */
         .img-container.thumb {
             width: 120px;
         }
@@ -201,8 +198,6 @@
             border: 1px solid var(--border);
             cursor: pointer;
         }
-
-        /* 2) 1차 클릭: 조금 확대 상태 (가로 220px) */
         .img-container.expanded {
             width: 220px;
         }
@@ -215,8 +210,6 @@
             border: 1px solid var(--border);
             cursor: pointer;
         }
-
-        /* 원본 보기 버튼 */
         .btn-view-original {
             display: none;
             width: 100%;
@@ -240,7 +233,7 @@
             display: block;
         }
 
-        /* 이력 아코디언 */
+        /* 📜 수정 이력 아코디언 스타일 (복구됨) */
         .history-section {
             margin-top: 14px;
             padding-top: 10px;
@@ -257,6 +250,7 @@
             align-items: center;
             gap: 4px;
             padding: 2px 0;
+            font-weight: 600;
         }
         .history-btn:hover {
             color: var(--primary);
@@ -265,15 +259,18 @@
         .history-list {
             display: none;
             margin-top: 10px;
-            background: #f1f5f9;
+            background: #f8fafc;
+            border: 1px solid var(--border);
             padding: 12px;
             border-radius: 8px;
             font-size: 0.85rem;
         }
-        .history-list.open { display: block; }
+        .history-list.open { 
+            display: block !important; 
+        }
         .history-item {
-            margin-bottom: 8px;
-            padding-bottom: 8px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
             border-bottom: 1px dotted #cbd5e1;
             color: #475569;
         }
@@ -348,14 +345,19 @@
 
     <!-- GitHub API 호출 JS 스크립트 -->
     <script>
-    const GITHUB_OWNER = "web-eu-watch";
-    const GITHUB_REPO = "crawl_eu";
-    const WORKFLOW_ID = "run.yml";
-    const GITHUB_TOKEN = "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";
+    const GITHUB_OWNER = "web-eu-watch";   
+    const GITHUB_REPO = "crawl_eu";        
+    const WORKFLOW_ID = "run.yml";         
+    const GITHUB_TOKEN = "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";   // 1단계에서 발급받은 토큰 전체
 
     async function triggerGitHubAction() {
         const btn = document.getElementById('run-action-btn');
         const statusTxt = document.getElementById('action-status');
+
+        if (!GITHUB_TOKEN) {
+            alert("GITHUB_TOKEN이 설정되지 않았습니다.");
+            return;
+        }
 
         if (!confirm("GitHub Actions를 실행하여 새로 크롤링 및 빌드를 진행하시겠습니까?")) return;
 
@@ -500,21 +502,23 @@
                 `;
             }
 
+            /* 📜 수정 이력 레더링 부분 */
             let historyHtml = '';
             if (item.history && item.history.length > 0) {
                 const historyItems = item.history.map((h, i) => {
                     const hText = escapeHtml(cleanContents(h.previousContents)).replace(/\n/g, '<br>');
+                    const hDate = h.savedAt ? `<span style="font-size:0.78rem; color:var(--text-muted); margin-left:6px;">(${h.savedAt})</span>` : '';
                     return `
                         <div class="history-item">
-                            <strong>[수정 전 기록 ${i + 1}]</strong><br>
-                            ${hText || '<i>(내용 없음)</i>'}
+                            <strong>[수정 전 기록 ${i + 1}]</strong>${hDate}<br>
+                            <div style="margin-top:4px;">${hText || '<i>(내용 없음)</i>'}</div>
                         </div>
                     `;
                 }).join('');
 
                 historyHtml = `
                     <div class="history-section">
-                        <button class="history-btn" onclick="toggleHistory(this)">
+                        <button type="button" class="history-btn" onclick="toggleHistory(this)">
                             📜 이전 수정 기록 보기 (${item.history.length}회)
                         </button>
                         <div class="history-list">
@@ -542,9 +546,12 @@
         });
     }
 
+    /* 📜 수정 이력 열기/닫기 토글 함수 */
     function toggleHistory(btn) {
-        const list = btn.nextElementSibling;
-        list.classList.toggle('open');
+        const historyList = btn.nextElementSibling;
+        if (historyList) {
+            historyList.classList.toggle('open');
+        }
     }
 
     function toggleImgSize(imgElement) {
@@ -608,6 +615,7 @@
         return str
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
+            .replace(/ animate>/g, "&gt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
