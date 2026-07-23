@@ -33,10 +33,14 @@ jobs:
       - name: 크롤링/데이터 수집 파이썬 실행
         run: python getNotice.py recent # 👈 실행할 첫 번째 파이썬 파일명
 
+      # 5. HTML 빌드 파이썬(genHtml) 실행 및 환경 변수 전달
       - name: HTML 빌드 파이썬(genHtml) 실행
+        env:
+          # 🔑 GitHub Secrets에 저장해둔 EU_ACTION_TOKEN을 genHTML.py로 전달!
+          EU_ACTION_TOKEN: ${{ secrets.EU_ACTION_TOKEN }}
         run: python genHTML.py # 👈 실행할 두 번째 파이썬 파일명
 
-      # 5. 파이썬이 새로 만들거나 변경한 파일(index.html, json 등)을 Git에 자동 커밋&푸시
+      # 6. 파이썬이 새로 만들거나 변경한 파일(index.html, json 등)을 Git에 자동 커밋&푸시
       - name: 변경된 파일 Git 레포지토리에 자동 저장
         run: |
           git config --global user.name "github-actions[bot]"
