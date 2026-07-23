@@ -25,13 +25,50 @@
             max-width: 800px;
             margin: 0 auto;
         }
+
+        /* 📌 Header 및 타이틀 영역 수정 (버튼 나란히 배치) */
         header {
             margin-bottom: 20px;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         h1 {
             font-size: 1.6rem;
             color: var(--text);
+        }
+
+        /* 🚀 인라인 실행 버튼 및 상태 메시지 */
+        .action-btn-inline {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #2ea44f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: background 0.2s, opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .action-btn-inline:hover {
+            background: #2c974b;
+        }
+        .action-status-inline {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            min-height: 20px;
         }
 
         /* 검색바 */
@@ -136,7 +173,7 @@
         }
         .card-body {
             flex: 1;
-            min-width: 0; /* Text overflow 처리 보장 */
+            min-width: 0;
             word-break: break-word;
             font-size: 0.95rem;
             line-height: 1.6;
@@ -179,7 +216,7 @@
             cursor: pointer;
         }
 
-        /* 원본 보기 버튼 (확대 시 이미지 아래 노출) */
+        /* 원본 보기 버튼 */
         .btn-view-original {
             display: none;
             width: 100%;
@@ -282,7 +319,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>📢 이유 공지사항 </h1>
+            <div class="title-row">
+                <h1>📢 이유 공지사항</h1>
+                <button id="run-action-btn" class="action-btn-inline" onclick="triggerGitHubAction()">
+                    🚀 긁어오기
+                </button>
+            </div>
+            <div id="action-status" class="action-status-inline"></div>
         </header>
 
         <div class="search-box">
@@ -302,6 +345,61 @@
         <div id="noticeContainer"></div>
         <div id="pagination" class="pagination"></div>
     </div>
+
+    <!-- GitHub API 호출 JS 스크립트 -->
+    <script>
+    const GITHUB_OWNER = "web-eu-watch";
+    const GITHUB_REPO = "crawl_eu";
+    const WORKFLOW_ID = "run.yml";
+    const GITHUB_TOKEN = "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";
+
+    async function triggerGitHubAction() {
+        const btn = document.getElementById('run-action-btn');
+        const statusTxt = document.getElementById('action-status');
+
+        if (!confirm("GitHub Actions를 실행하여 새로 크롤링 및 빌드를 진행하시겠습니까?")) return;
+
+        btn.disabled = true;
+        btn.style.opacity = "0.6";
+        statusTxt.innerText = "⏳ GitHub에 실행 요청 전송 중...";
+        statusTxt.style.color = "#333";
+
+        const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`;
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/vnd.github+json",
+                    "Authorization": `Bearer ${GITHUB_TOKEN}`,
+                    "X-GitHub-Api-Version": "2022-11-28",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ref: "main"
+                })
+            });
+
+            if (response.status === 204) {
+                statusTxt.innerText = "✅ 실행 요청 성공! (1~2분 후 자동 갱신됩니다)";
+                statusTxt.style.color = "green";
+            } else {
+                const errData = await response.json().catch(() => ({}));
+                statusTxt.innerText = `❌ 실패 (${response.status}): ${errData.message || '권한 또는 경로 오류'}`;
+                statusTxt.style.color = "red";
+            }
+        } catch (err) {
+            console.error(err);
+            statusTxt.innerText = "❌ 통신 오류가 발생했습니다.";
+            statusTxt.style.color = "red";
+        } finally {
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.style.opacity = "1";
+            }, 5000);
+        }
+    }
+    </script>
 
     <!-- 파이썬 데이터 주입 타겟 -->
     <script id="master-data-raw" type="application/json">
@@ -392,7 +490,6 @@
             const mainText = cleanContents(item.contents);
             const formattedContents = escapeHtml(mainText).replace(/\n/g, '<br>');
 
-            // 📸 단순화된 이미지 영역 세팅 (localImgPath만 직접 참조)
             let imgHtml = '';
             if (item.localImgPath) {
                 imgHtml = `
@@ -403,7 +500,6 @@
                 `;
             }
 
-            // 히스토리 파트
             let historyHtml = '';
             if (item.history && item.history.length > 0) {
                 const historyItems = item.history.map((h, i) => {

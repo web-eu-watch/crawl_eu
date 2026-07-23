@@ -18,8 +18,15 @@
         "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/07/23/219ca14a-9b83-4b5d-b394-a5991fa23381.png",
         "localImgPath": "images/5575008_219ca14a-9b83-4b5d-b394-a5991fa23381.png",
         "firstSeenAt": "2026-07-23 17:23:19",
-        "lastUpdatedAt": "2026-07-23 17:23:19",
-        "history": []
+        "lastUpdatedAt": "2026-07-23 18:07:30",
+        "history": [
+            {
+                "updatedAt": "2026-07-23 18:07:30",
+                "previousContents": "공지수정 테스트",
+                "previousImgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/07/23/219ca14a-9b83-4b5d-b394-a5991fa23381.png",
+                "previousLocalImgPath": "images/5575008_219ca14a-9b83-4b5d-b394-a5991fa23381.png"
+            }
+        ]
     },
     "5575005": {
         "idx": 5575005,
