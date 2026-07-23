@@ -37,7 +37,6 @@ jobs:
       - name: HTML 빌드 파이썬(genHtml) 실행
         env:
           # 🔑 GitHub Secrets에 저장해둔 EU_ACTION_TOKEN을 genHTML.py로 전달!
-          EU_ACTION_TOKEN: ${{ secrets.EU_ACTION_TOKEN }}
         run: python genHTML.py # 👈 실행할 두 번째 파이썬 파일명
 
       # 6. 파이썬이 새로 만들거나 변경한 파일(index.html, json 등)을 Git에 자동 커밋&푸시

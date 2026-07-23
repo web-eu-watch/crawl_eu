@@ -26,13 +26,13 @@
             margin: 0 auto;
         }
 
-        /* 📌 Header 및 타이틀 영역 (버튼 인라인 배치) */
+        /* 📌 Header 및 타이틀 영역 */
         header {
             margin-bottom: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
         .title-row {
             display: flex;
@@ -44,6 +44,46 @@
         h1 {
             font-size: 1.6rem;
             color: var(--text);
+        }
+
+        /* 🔑 토큰 입력창 & 컨트롤 영역 */
+        .token-control-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .token-input {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            outline: none;
+            width: 220px;
+        }
+        .token-input:focus {
+            border-color: var(--primary);
+        }
+        .save-btn {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .save-btn:hover {
+            background: #e2e8f0;
+            color: var(--primary);
         }
 
         /* 🚀 인라인 실행 버튼 및 상태 메시지 */
@@ -69,6 +109,13 @@
             font-size: 0.82rem;
             color: var(--text-muted);
             min-height: 20px;
+        }
+
+        /* ⏱️ 최근 업데이트 시각 스타일 */
+        .last-updated-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
 
         /* 검색바 */
@@ -233,7 +280,7 @@
             display: block;
         }
 
-        /* 📜 수정 이력 아코디언 스타일 (복구됨) */
+        /* 📜 수정 이력 아코디언 스타일 */
         .history-section {
             margin-top: 14px;
             padding-top: 10px;
@@ -310,6 +357,8 @@
             .img-container.thumb img { width: 100%; height: 160px; }
             .img-container.expanded img { width: 100%; max-height: 400px; }
             .search-options { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .token-input { width: 100%; }
+            .token-control-box { width: 100%; }
         }
     </style>
 </head>
@@ -318,11 +367,23 @@
         <header>
             <div class="title-row">
                 <h1>📢 이유 공지사항</h1>
-                <!-- <button id="run-action-btn" class="action-btn-inline" onclick="triggerGitHubAction()">
-                    🚀 긁어오기
-                </button> -->
             </div>
+
+            <!-- 🔑 토큰 입력 및 긁어오기 컨트롤 영역 -->
+            <div class="token-control-box">
+                <input type="password" id="github-token-input" class="token-input" placeholder="GitHub PAT 토큰 입력" />
+                <button class="save-btn" onclick="saveToken()">💾 저장</button>
+                <button id="run-action-btn" class="action-btn-inline" onclick="triggerGitHubAction()">
+                    🚀 긁어오기
+                </button>
+            </div>
+            
             <div id="action-status" class="action-status-inline"></div>
+
+            <!-- ⏱️ 최근 업데이트 시각 표시 영역 (NEW) -->
+            <div class="last-updated-text">
+                🕒 최근 업데이트: <span id="last-updated-time" style="font-weight: 600;">-</span>
+            </div>
         </header>
 
         <div class="search-box">
@@ -343,19 +404,56 @@
         <div id="pagination" class="pagination"></div>
     </div>
 
-    <!-- GitHub API 호출 JS 스크립트 -->
+    <!-- GitHub API 및 토큰 관리 JS 스크립트 -->
     <script>
     const GITHUB_OWNER = "web-eu-watch";   
     const GITHUB_REPO = "crawl_eu";        
     const WORKFLOW_ID = "run.yml";         
-    const GITHUB_TOKEN = "/* __GITHUB_TOKEN__ */";
 
+    // 🔑 파이썬 빌드 시 주입되는 최신 갱신 시각 타겟
+    const buildTime = "/* __BUILD_TIME__ */";
+
+    // 페이지 로드 시 localStorage 복원 및 업데이트 시각 바인딩
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedToken = localStorage.getItem("eu_github_pat");
+        if (savedToken) {
+            document.getElementById("github-token-input").value = savedToken;
+        }
+
+        // ⏱️ 최근 업데이트 시각 화면 표시
+        const timeEl = document.getElementById("last-updated-time");
+        if (timeEl && buildTime && !buildTime.includes("__BUILD_TIME__")) {
+            timeEl.textContent = buildTime;
+        } else if (timeEl) {
+            timeEl.textContent = "정보 없음 (로컬 실행)";
+        }
+    });
+
+    // 토큰 저장 함수
+    function saveToken() {
+        const inputEl = document.getElementById("github-token-input");
+        const token = inputEl.value.trim();
+
+        if (!token) {
+            alert("토큰을 입력해주세요.");
+            return;
+        }
+
+        localStorage.setItem("eu_github_pat", token);
+        alert("✅ 토큰이 브라우저에 안전하게 저장되었습니다!");
+    }
+
+    // GitHub Actions 트리거 함수
     async function triggerGitHubAction() {
         const btn = document.getElementById('run-action-btn');
         const statusTxt = document.getElementById('action-status');
+        
+        // localStorage에서 토큰 읽기
+        const token = localStorage.getItem("eu_github_pat") || document.getElementById("github-token-input").value.trim();
 
-        if (!GITHUB_TOKEN) {
-            alert("GITHUB_TOKEN이 설정되지 않았습니다.");
+        if (!token) {
+            alert("🔑 GitHub PAT 토큰이 필요합니다.\n입력창에 토큰을 입력하고 [저장] 후 다시 시도해 주세요.");
+            document.getElementById("github-token-input").focus();
             return;
         }
 
@@ -373,7 +471,7 @@
                 method: "POST",
                 headers: {
                     "Accept": "application/vnd.github+json",
-                    "Authorization": `Bearer ${GITHUB_TOKEN}`,
+                    "Authorization": `Bearer ${token}`,
                     "X-GitHub-Api-Version": "2022-11-28",
                     "Content-Type": "application/json"
                 },
@@ -387,7 +485,7 @@
                 statusTxt.style.color = "green";
             } else {
                 const errData = await response.json().catch(() => ({}));
-                statusTxt.innerText = `❌ 실패 (${response.status}): ${errData.message || '권한 또는 경로 오류'}`;
+                statusTxt.innerText = `❌ 실패 (${response.status}): ${errData.message || '토큰 권한 또는 레포지토리 경로 오류'}`;
                 statusTxt.style.color = "red";
             }
         } catch (err) {
@@ -502,7 +600,7 @@
                 `;
             }
 
-            /* 📜 수정 이력 레더링 부분 */
+            /* 📜 수정 이력 렌더링 부분 */
             let historyHtml = '';
             if (item.history && item.history.length > 0) {
                 const historyItems = item.history.map((h, i) => {
@@ -615,7 +713,6 @@
         return str
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
-            .replace(/ animate>/g, "&gt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
