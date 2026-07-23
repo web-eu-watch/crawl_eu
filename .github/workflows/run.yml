@@ -35,7 +35,6 @@ jobs:
 
       # 5. HTML 빌드 파이썬(genHtml) 실행 및 환경 변수 전달
       - name: HTML 빌드 파이썬(genHtml) 실행
-        env:
           # 🔑 GitHub Secrets에 저장해둔 EU_ACTION_TOKEN을 genHTML.py로 전달!
         run: python genHTML.py # 👈 실행할 두 번째 파이썬 파일명
 
