@@ -6640,12 +6640,19 @@
         "idx": 5863029,
         "date": "2026-08-24 17:26:03",
         "isTop": true,
-        "contents": "당일공약<br />\n<br />\n1천개이상 브압<br />\n5천개이상 배민<br />\n만개이상 작은 선물<br />\n5만개이상 닉꾸 + @<br />\n10만개이상 개인연락처 & 식사대접<br />\n<br />\n요청시 이행함미당//",
+        "contents": "당일누적공약<br />\r\n<br />\r\n1천개이상 브압<br />\r\n5천개이상 배민<br />\r\n만개이상 작은 선물<br />\r\n5만개이상 닉꾸 + @<br />\r\n10만개이상 개인연락처 & 식사대접<br />\r\n<br />\r\n요청시 이행함미당//",
         "imgMainSrc": "",
         "localImgPath": "",
         "firstSeenAt": "2026-08-24 19:48:06",
-        "lastUpdatedAt": "2026-08-24 19:48:06",
-        "history": []
+        "lastUpdatedAt": "2026-08-25 19:50:10",
+        "history": [
+            {
+                "updatedAt": "2026-08-25 19:50:10",
+                "previousContents": "당일공약<br />\n<br />\n1천개이상 브압<br />\n5천개이상 배민<br />\n만개이상 작은 선물<br />\n5만개이상 닉꾸 + @<br />\n10만개이상 개인연락처 & 식사대접<br />\n<br />\n요청시 이행함미당//",
+                "previousImgMainSrc": "",
+                "previousLocalImgPath": ""
+            }
+        ]
     },
     "5861562": {
         "idx": 5861562,
