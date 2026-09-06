@@ -6953,5 +6953,38 @@
         "firstSeenAt": "2026-09-04 21:32:33",
         "lastUpdatedAt": "2026-09-04 21:32:33",
         "history": []
+    },
+    "5987268": {
+        "idx": 5987268,
+        "date": "2026-09-07 05:15:48",
+        "isTop": false,
+        "contents": "9회차",
+        "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/07/7f1c1835-2fbd-458f-867c-6c90f279aaf8.png",
+        "localImgPath": "images/5987268_7f1c1835-2fbd-458f-867c-6c90f279aaf8.png",
+        "firstSeenAt": "2026-09-06 21:24:47",
+        "lastUpdatedAt": "2026-09-06 21:24:47",
+        "history": []
+    },
+    "5987265": {
+        "idx": 5987265,
+        "date": "2026-09-07 05:15:37",
+        "isTop": false,
+        "contents": "병가 상벌금 벌칙데이",
+        "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/07/5fd3de98-5372-4835-9363-5b1598885775.png",
+        "localImgPath": "images/5987265_5fd3de98-5372-4835-9363-5b1598885775.png",
+        "firstSeenAt": "2026-09-06 21:24:47",
+        "lastUpdatedAt": "2026-09-06 21:24:47",
+        "history": []
+    },
+    "5987262": {
+        "idx": 5987262,
+        "date": "2026-09-07 05:15:19",
+        "isTop": false,
+        "contents": "중간직급전",
+        "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/07/27ceee0a-4244-460a-893a-b2fb3257c025.png",
+        "localImgPath": "images/5987262_27ceee0a-4244-460a-893a-b2fb3257c025.png",
+        "firstSeenAt": "2026-09-06 21:24:47",
+        "lastUpdatedAt": "2026-09-06 21:24:47",
+        "history": []
     }
 }
