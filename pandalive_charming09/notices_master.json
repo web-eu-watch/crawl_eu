@@ -7128,12 +7128,19 @@
         "idx": 6072192,
         "date": "2026-09-16 11:22:48",
         "isTop": false,
-        "contents": "12회차❣️",
+        "contents": "13회차❣️",
         "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/16/98695fbf-6244-4c91-a586-78b62e62fe9b.png",
         "localImgPath": "images/6072192_98695fbf-6244-4c91-a586-78b62e62fe9b.png",
         "firstSeenAt": "2026-09-16 22:13:24",
-        "lastUpdatedAt": "2026-09-16 22:13:24",
-        "history": []
+        "lastUpdatedAt": "2026-09-18 21:43:53",
+        "history": [
+            {
+                "updatedAt": "2026-09-18 21:43:53",
+                "previousContents": "12회차❣️",
+                "previousImgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/16/98695fbf-6244-4c91-a586-78b62e62fe9b.png",
+                "previousLocalImgPath": "images/6072192_98695fbf-6244-4c91-a586-78b62e62fe9b.png"
+            }
+        ]
     },
     "6072189": {
         "idx": 6072189,
@@ -7144,6 +7151,28 @@
         "localImgPath": "images/6072189_1fef60b4-bfb9-4751-95f6-8194095baf06.png",
         "firstSeenAt": "2026-09-16 22:13:24",
         "lastUpdatedAt": "2026-09-16 22:13:24",
+        "history": []
+    },
+    "6096696": {
+        "idx": 6096696,
+        "date": "2026-09-18 21:55:55",
+        "isTop": true,
+        "contents": "《《오늘 어나더 마지막 날》》<br />\n<br />\n중간에 투입돼서 시작부터 쉽지않았는데,<br />\n원탑오빠를 중심으로<br />\n택사오빠, 텡이오빠, 새롭게 만난 난놈오빠<br />\n그리구 다른 여러<br />\n오빠들이 다 같이 힘을 모아서<br />\n이유를 여기까지 만들어줘쏘요 !<br />\n<br />\n혼자였다면 절대 오지 못했을 소중한 이 자리,,,<br />\n<br />\n오빠들이 어렵게 올려준 그 마음,<br />\n모두 한마음이라 생각합니당<br />\n<br />\n이유를 지나가다 아시는 분들<br />\n한번씩이라두 응원하러 와주시면 감사하겠숩니다 !!",
+        "imgMainSrc": "",
+        "localImgPath": "",
+        "firstSeenAt": "2026-09-18 21:43:53",
+        "lastUpdatedAt": "2026-09-18 21:43:53",
+        "history": []
+    },
+    "6091590": {
+        "idx": 6091590,
+        "date": "2026-09-18 11:32:11",
+        "isTop": false,
+        "contents": "14회차❣️",
+        "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/18/68bebcc3-9a27-4896-a8b2-9cedca66d1ee.png",
+        "localImgPath": "images/6091590_68bebcc3-9a27-4896-a8b2-9cedca66d1ee.png",
+        "firstSeenAt": "2026-09-18 21:43:53",
+        "lastUpdatedAt": "2026-09-18 21:43:53",
         "history": []
     }
 }
