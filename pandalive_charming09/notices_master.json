@@ -7179,11 +7179,40 @@
         "idx": 6111795,
         "date": "2026-09-20 19:42:01",
         "isTop": false,
-        "contents": "!",
+        "contents": "마지막날 퇴방❣️",
         "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/20/9bbcbd3a-fdc7-4c03-aab1-ade78358c5c8.png",
         "localImgPath": "images/6111795_9bbcbd3a-fdc7-4c03-aab1-ade78358c5c8.png",
         "firstSeenAt": "2026-09-20 21:36:46",
-        "lastUpdatedAt": "2026-09-20 21:36:46",
+        "lastUpdatedAt": "2026-09-21 22:37:08",
+        "history": [
+            {
+                "updatedAt": "2026-09-21 22:37:08",
+                "previousContents": "!",
+                "previousImgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/20/9bbcbd3a-fdc7-4c03-aab1-ade78358c5c8.png",
+                "previousLocalImgPath": "images/6111795_9bbcbd3a-fdc7-4c03-aab1-ade78358c5c8.png"
+            }
+        ]
+    },
+    "6123804": {
+        "idx": 6123804,
+        "date": "2026-09-22 02:17:23",
+        "isTop": false,
+        "contents": "이유없다구<br />\r\n바람피믄 D지는고야",
+        "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/22/bea5d411-7c18-42fa-8f76-2fa827bb16a0.jpeg",
+        "localImgPath": "images/6123804_bea5d411-7c18-42fa-8f76-2fa827bb16a0.jpeg",
+        "firstSeenAt": "2026-09-21 22:37:08",
+        "lastUpdatedAt": "2026-09-21 22:37:08",
+        "history": []
+    },
+    "6123729": {
+        "idx": 6123729,
+        "date": "2026-09-22 02:10:16",
+        "isTop": false,
+        "contents": "어나더4 마지막회차❣️",
+        "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/22/86da05e0-e1b1-4f19-bb81-2719b6746b73.png",
+        "localImgPath": "images/6123729_86da05e0-e1b1-4f19-bb81-2719b6746b73.png",
+        "firstSeenAt": "2026-09-21 22:37:08",
+        "lastUpdatedAt": "2026-09-21 22:37:08",
         "history": []
     }
 }
