@@ -7219,11 +7219,18 @@
         "idx": 6144978,
         "date": "2026-09-24 06:13:52",
         "isTop": true,
-        "contents": "# 원탑해댱님의 20만수르❣️ (글작성중) 이미지 수정중<br />\n<br />\n이유 10만수르 처음 받아보는데,<br />\n두번씩이나... ㅇㅁㅇ❣️",
-        "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/24/56ec9ae7-0c2a-4909-bdea-faad26b49a4b.png",
-        "localImgPath": "images/6144978_56ec9ae7-0c2a-4909-bdea-faad26b49a4b.png",
+        "contents": "# 원탑해댱님의 20만수르❣️ (글작성중)<br />\r\n<br />\r\n이유 10만수르 처음 받아보는데,<br />\r\n두번씩이나... ㅇㅁㅇ❣️",
+        "imgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/25/19294401-2fa1-4007-9aa0-96b54c49238d.png",
+        "localImgPath": "images/6144978_19294401-2fa1-4007-9aa0-96b54c49238d.png",
         "firstSeenAt": "2026-09-23 22:20:59",
-        "lastUpdatedAt": "2026-09-23 22:20:59",
-        "history": []
+        "lastUpdatedAt": "2026-09-24 22:28:09",
+        "history": [
+            {
+                "updatedAt": "2026-09-24 22:28:09",
+                "previousContents": "# 원탑해댱님의 20만수르❣️ (글작성중) 이미지 수정중<br />\n<br />\n이유 10만수르 처음 받아보는데,<br />\n두번씩이나... ㅇㅁㅇ❣️",
+                "previousImgMainSrc": "https://cdn.pandalive.co.kr/upload/board/2026/09/24/56ec9ae7-0c2a-4909-bdea-faad26b49a4b.png",
+                "previousLocalImgPath": "images/6144978_56ec9ae7-0c2a-4909-bdea-faad26b49a4b.png"
+            }
+        ]
     }
 }
